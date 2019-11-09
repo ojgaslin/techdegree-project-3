@@ -1,7 +1,9 @@
 var currentSum = 0;
-var totalActivityCost = $('.activities').append("<h1>" + "Total Activity Cost:" + currentSum + "</h1>");
+//** created element displaying total cost of activities and currentSum global variable
+$('.activities').append("<h3>" + "Total Activity Cost: <span>" + currentSum + "</span></h3>");
+var totalActivityCost = $('.activities h3 span');
 //*focus name field when page loads
-$('Name').focus();
+$('#name').focus();
 //*disable and hide the text field under job role category
 $('#other-title').attr('hidden', true).attr('disabled', true);
 //**using .change event listener runs function and shows text field if variable jobSelection equals other option, else the text field remains hidden and disabled
@@ -32,7 +34,7 @@ $( "#design" ).change(function() {
 //**value of select element is changed to first available color upon selecting a theme
      $('#allcolors').val('cornflowerblue');
 //**last option is selected and removed from drop down list
-     $("#allcolors option:last").remove();
+     $("#allcolors option:last").attr('hidden', true).attr('disabled', true);
      $(".jspuns").show();
      $(".heartjs").hide();
    }
@@ -41,8 +43,12 @@ $( "#design" ).change(function() {
 //**value of select element is changed to first available color upon selecting a theme
      $('#allcolors').val('tomato');
 //**last option is selected and removed from drop down list
-     $("#allcolors option:last").remove();
+     $("#allcolors option:last").attr('hidden', true).attr('disabled', true);
      $(".jspuns").hide();
      $(".heartjs").show();
    }
 });
+$("input checkbox").change(function() {
+  var chosenCheckbox = $("input checkbox");
+  console.log("The checkboxes' change event listener is functional!");
+  });
