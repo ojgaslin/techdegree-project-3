@@ -48,7 +48,9 @@ $( "#design" ).change(function() {
      $(".heartjs").show();
    }
 });
-$("input checkbox").change(function() {
-  var chosenCheckbox = $("input checkbox");
-  console.log("The checkboxes' change event listener is functional!");
+$(":checkbox").change(function() {
+  var target = $(this);
+  console.log(target);
+  var cost = parseInt($(this).data("data-cost"));
+  console.log(cost);
   });
