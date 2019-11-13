@@ -50,7 +50,15 @@ $( "#design" ).change(function() {
 });
 $(":checkbox").change(function() {
   var target = $(this);
-  console.log(target);
+  console.log($(this).last().attr("data-cost"));
   var cost = parseInt($(this).data("data-cost"));
-  console.log(cost);
+
+  var isChecked = $('input[type=checkbox]').prop('checked');
+  if (isChecked == true) {
+    console.log(true);
+    currentSum = currentSum + cost;
+  } else {
+    console.log(false);
+    currentSum = currentSum - cost;
+  }
   });
