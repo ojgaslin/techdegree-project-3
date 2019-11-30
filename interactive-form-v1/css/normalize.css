@@ -394,7 +394,3 @@ table {
     border-collapse: collapse;
     border-spacing: 0;
 }
-
-.input-error {
-    border: solid 2px #000000;
-}

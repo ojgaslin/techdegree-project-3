@@ -25,9 +25,14 @@ $('#allcolors').append('<option value="initial">Please select a T-shirt theme.</
 //**color options are hidden and 'Please select a T-shirt theme.' is set as initial value
 $('#allcolors').val('initial')
 
+$('label:contains(Color)').hide();
+$('#allcolors').hide();
+
 console.log($('.activities input'));
 //**change event listener listens for change in design select element
 $( "#design" ).change(function() {
+  $('label:contains(Color)').show();
+  $('#allcolors').show();
 //**selection variable is equal to value of design select element
   let selection = $('#design').val();
 //**if variable selection equals value 'js puns', color options with .jspuns class will show in drop down menu, and other colors will be hidden
@@ -101,22 +106,28 @@ $(":checkbox").change(function() {
    }
 }
 }
+//**hide 'Select Payment Method option', hide paypal option, hide bitcoin option
 $('#payment option:contains(Select Payment Method)').hide();
 $('#paypal').hide();
 $('#bitcoin').hide();
+$('#credit-card').hide();
+//**change funtion for payment type selection
 $('#payment').change(function() {
+//**variable 'paymentSelectElement' made to hold value of payment selection
    paymentSelectElement = $('#payment').val();
-   console.log(paymentSelectElement)
+//**if the selection is credit card, the credit card field will show, else this field will be hidden
    if(paymentSelectElement == 'Credit Card') {
        $('#credit-card').show();
    } else {
        $('#credit-card').hide();
    }
+//**if the selection is paypal, this field will show, else it will be hidden
   if(paymentSelectElement == 'PayPal') {
        $('#paypal').show();
   } else {
        $('#paypal').hide();
   }
+//**if the selection is bitcoin for payment, this field will show, else it will be hidden
   if(paymentSelectElement == 'Bitcoin') {
        $('#bitcoin').show();
   } else {
@@ -124,39 +135,154 @@ $('#payment').change(function() {
   }
 });
 
-
+//**click function on register button, this is master function that will contain all the functions for the fields the user must select on the form
 $("button:contains('Register')").click(function() {
   console.log('button click');
      validateName();
+     validateEmail();
+     validateActivities();
+     validateCreditCard();
+     validateZipCode();
+     validateCVV();
 });
-
+//**function for name field
 function validateName() {
-
+//**variable nameFieldContent created to hold input of name field
     var nameFieldContent = $('#name').val();
-    console.log(nameFieldContent);
-    var nameFieldContentReg = /^[a-zA-Z]+$/;
-    if(nameFieldContent == '' || !nameFieldContentReg.test(nameFieldContent)) {
-      $('#name input').addClass("input-error");
-      $("#name").append("Name field content does not meet requirements");
+//**variable nameFieldContentRegex holds the conditions for acceptable input and must fit these criteria
+    var nameFieldContentRegex = /^[a-zA-Z]+$/;
+    console.log(nameFieldContentRegex.test(nameFieldContent));
+//**if nameFieldContent is equal to empty space OR if 'nameFieldContent' does not fit acceptable criteria for nameFieldContentRegex,
+//**then class input-error is added to name field
+    if(nameFieldContent == '' || !nameFieldContentRegex.test(nameFieldContent)) {
+      $('#name').addClass("input-error");
+//**if element with id '#name-error' is not present/does not have a length, then insert this error element before name field and return false
+      if(!$("#name-error").length){
+              $("<span id='name-error'>Name field content does not meet requirements.</span>").insertBefore("#name");
+      }
       return false;
+//**else remove element with id name-error and remove class input-error from name field and return true
     } else {
-
-      $('#name input').removeClass("input-error");
+      $("#name-error").remove();
+      $('#name').removeClass("input-error");
       return true;
     }
 }
+//**function for email field, testing input in real-time validation error message
+$(function() {
+    $('#mail').on('keyup', function() {
+      validateEmail();
+    })
+})
+//**validate email function which is called in keyup function above
 function validateEmail() {
-
+//**content of email field is equal to value of input in field with id mail
+  var emailFieldContent = $('#mail').val();
+//**regex requirements for a passable email address input
+  var emailFieldContentRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+//**if emailFieldContent is equal to nothing OR if emailFieldContent is Not matched to emailFieldContentRegex, the class input-error is added to mail field for red border
+//**and the element with id email-error is created and inserted before mail field
+  if(emailFieldContent == '' || !emailFieldContentRegex.test(emailFieldContent)) {
+    $('#mail').addClass("input-error");
+    if(!$("#email-error").length) {
+    $("<span id='email-error'>Email field content does not meet requirements.</span>").insertBefore("#mail");
+  }
+    return false;
+//**else element with id email error is removed and class input-error is removed for border to not be red anymore
+  } else {
+    $("#email-error").remove();
+    $('#mail').removeClass("input-error");
+    return true;
+  }
 }
+//**function for activities field which is checkbox selection
 function validateActivities() {
-
+//**variable checkboxes defined to contain all elements with type checkbox
+  var checkboxes = $('[type=checkbox]');
+//**variable okay is initially false
+  var okay=false;
+//**for variable i=0, i is increased by 1 as long as it is less than length of checkboxes
+  for(var i=0; i < checkboxes.length; i++) {
+//**if i checkboxes is checked, then variable okay is true
+    if(checkboxes[i].checked)
+    {
+      okay=true;
+    }
+  }
+//**if variable is not okay, then error message inserted before first checkbox element
+  if(!okay) {
+     $("<span id='checkbox-error'>You must select at least one checkbox to continue.</span>").insertBefore("#first-checkbox");
+  }
+  return okay;
 }
+//**validate the credit card number field if credit card is selected as a payment method
 function validateCreditCard() {
-
+//**variable holds the value of payment selection
+  var paymentSelectElement = $('#payment').val();
+//**variable ccnum holds the value of the input in the credit card number field
+  var ccnum = String($('#cc-num').val());
+//**id credit-error is removed in case there was previously an error thrown upon clicking register button
+  $("#credit-error").remove();
+//**if payment is equal to credit card and input in field is nothing, class input-error is added for red border on field, and element with error message is inserted after field
+   if(paymentSelectElement == 'Credit Card' && ccnum == '') {
+      $('#cc-num').addClass("input-error");
+      if(!$("#credit-error").length) {
+      $("<span id='credit-error'>Please enter a credit card number.</span>").insertAfter("#cc-num");
+    }
+      return false;
+//**else if payment is selected to credit card and there is a number in the input that doesn't match, the class input-error is added, and if there is no error there, the error message element is added
+   } else {
+  if(paymentSelectElement == 'Credit Card' && !ccnum.match("[1-9][0-9]{12,15}")) {
+     $('#cc-num').addClass("input-error");
+     if(!$("#credit-error").length) {
+     $("<span id='credit-error'>The number entered is not 13 to 16 digits long.</span>").insertAfter("#cc-num");
+   }
+     return false;
+//**else the class input error is removed and true is returned
+} else {
+$('#cc-num').removeClass("input-error");
+    return true;
 }
+}}
+
+//**validate zip code in credit card info section if credit card is selected as payment
 function validateZipCode() {
-
+//**zipcodeInput variable holds string value contained in zipcode field
+  var zipcodeInput = String($('#zip').val());
+//**zip-error id is removed in case there was a previous error thrown
+  $("#zip-error").remove();
+  var paymentSelectElement = $('#payment').val();
+//**if payment selected is credit card, and if the input in zipcode field does not match regex of 5 digits or 5 digits and 4 digits,
+//**then class input-error is added for red border and if there is not already an error message, there is one created with id zip-error
+  if(paymentSelectElement == 'Credit Card' && !zipcodeInput.match("^\\d{5}(-\\d{4})?$")) {
+     $('#zip').addClass("input-error");
+     if(!$("#zip-error").length) {
+     $("<span id='zip-error'>Number entered must have 5 digits or 5 digits followed by a hyphen and ending with four digits.</span>").insertAfter("#zip");
+   }
+     return false;
+//**else the input error class is removed and the red border will go away, and true is returned
+  } else {
+    $('#zip').removeClass("input-error");
+    return true;
+  }
 }
+//**if credit card payment is selected, validateCVV function will validate the cvv number for credit card
 function validateCVV() {
-
+//**cvvNumber variable is equal to string value of cvv input field
+  var cvvNumber = String($('#cvv').val());
+  var paymentSelectElement = $('#payment').val();
+//**if credit card payment is selected as value, and is cvv number input does not match the regex which accepts either 3 or 4 digits,
+//**then the cvv field with get class input error which puts a red border, and if there is not an error message already, one will be given and inserted after the field
+  if(paymentSelectElement == 'Credit Card' && !cvvNumber.match("^[0-9]{3,4}$")) {
+     $('#cvv').addClass("input-error");
+     if(!$("#cvv-error").length) {
+     $("<span id='cvv-error'>Number entered must have 3 digits or 4 digits for Amex.</span>").insertAfter('#cvv');
+   }
+     return false;
+//**else the class input error is removed and red border does not occur or is taken away, and the error message is also taken away
+  } else {
+      $('#cvv').removeClass("input-error");
+      $('#cvv-error').remove();
+      return true;
+  }
 }
