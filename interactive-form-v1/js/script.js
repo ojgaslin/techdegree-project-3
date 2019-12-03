@@ -110,7 +110,7 @@ $(":checkbox").change(function() {
 $('#payment option:contains(Select Payment Method)').hide();
 $('#paypal').hide();
 $('#bitcoin').hide();
-$('#credit-card').hide();
+$('#payment option[value="Credit Card"]').attr("selected",true);
 //**change funtion for payment type selection
 $('#payment').change(function() {
 //**variable 'paymentSelectElement' made to hold value of payment selection
@@ -137,14 +137,24 @@ $('#payment').change(function() {
 
 //**click function on register button, this is master function that will contain all the functions for the fields the user must select on the form
 $("button:contains('Register')").click(function() {
-  console.log('button click');
-     validateName();
-     validateEmail();
-     validateActivities();
-     validateCreditCard();
-     validateZipCode();
-     validateCVV();
+  if(validateForm()){
+    $("form").submit();
+  }
 });
+
+function validateForm(){
+    paymentSelectElement = $('#payment').val();
+    var pass=true;
+    console.log('button click');
+    if(!validateName() || !validateEmail() || !validateActivities() ){
+      pass = false;
+    }
+    if(paymentSelectElement == 'Credit Card') {
+    if(!validateCreditCard() || !validateZipCode() || !validateCVV())
+      pass = false;
+    }
+    return pass;
+}
 //**function for name field
 function validateName() {
 //**variable nameFieldContent created to hold input of name field
@@ -158,7 +168,7 @@ function validateName() {
       $('#name').addClass("input-error");
 //**if element with id '#name-error' is not present/does not have a length, then insert this error element before name field and return false
       if(!$("#name-error").length){
-              $("<span id='name-error'>Name field content does not meet requirements.</span>").insertBefore("#name");
+              $("<span id='name-error'>Please enter first name and last name.</span>").insertBefore("#name");
       }
       return false;
 //**else remove element with id name-error and remove class input-error from name field and return true
@@ -185,7 +195,7 @@ function validateEmail() {
   if(emailFieldContent == '' || !emailFieldContentRegex.test(emailFieldContent)) {
     $('#mail').addClass("input-error");
     if(!$("#email-error").length) {
-    $("<span id='email-error'>Email field content does not meet requirements.</span>").insertBefore("#mail");
+    $("<span id='email-error'>Email field content should be in the format of 'example@mail.com'.</span>").insertBefore("#mail");
   }
     return false;
 //**else element with id email error is removed and class input-error is removed for border to not be red anymore
