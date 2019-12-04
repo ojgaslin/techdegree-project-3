@@ -137,22 +137,27 @@ $('#payment').change(function() {
 
 //**click function on register button, this is master function that will contain all the functions for the fields the user must select on the form
 $("button:contains('Register')").click(function() {
+//**if function validateForm returns pass, then submit the form
   if(validateForm()){
     $("form").submit();
   }
 });
 
 function validateForm(){
+//**define payment select element within the function to equal the value selected in the payment menu
     paymentSelectElement = $('#payment').val();
+//**variable pass is equal to true
     var pass=true;
-    console.log('button click');
+//**if one of these functions is returns false, then in this if statement it will be 'not' false, meaning true, and then pass will be equal to false because one or more of these functions were equal to false
     if(!validateName() || !validateEmail() || !validateActivities() ){
       pass = false;
     }
+//**if Credit card is selected, and if one or more of these functions is 'not' false, it will be equal to true and pass will be false
     if(paymentSelectElement == 'Credit Card') {
     if(!validateCreditCard() || !validateZipCode() || !validateCVV())
       pass = false;
     }
+//**pass will be returned as true if the functions return true
     return pass;
 }
 //**function for name field
@@ -180,6 +185,7 @@ function validateName() {
 }
 //**function for email field, testing input in real-time validation error message
 $(function() {
+  //**run 'validateEmail' function when keyboard key is released in the email field
     $('#mail').on('keyup', function() {
       validateEmail();
     })
@@ -242,7 +248,7 @@ function validateCreditCard() {
       return false;
 //**else if payment is selected to credit card and there is a number in the input that doesn't match, the class input-error is added, and if there is no error there, the error message element is added
    } else {
-  if(paymentSelectElement == 'Credit Card' && !ccnum.match("[1-9][0-9]{12,15}")) {
+  if(paymentSelectElement == 'Credit Card' && !ccnum.match("^[1-9][0-9]{12,15}")) {
      $('#cc-num').addClass("input-error");
      if(!$("#credit-error").length) {
      $("<span id='credit-error'>The number entered is not 13 to 16 digits long.</span>").insertAfter("#cc-num");
